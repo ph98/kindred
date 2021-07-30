@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
 // import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import * as eva from '@eva-design/eva';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
   ApplicationProvider,
   BottomNavigation,
@@ -29,11 +29,11 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const { Navigator, Screen } = createBottomTabNavigator();
+const {Navigator, Screen} = createBottomTabNavigator();
 
 const Section: React.FC<{
   title: string;
-}> = ({ children, title }) => {
+}> = ({children, title}) => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -60,12 +60,12 @@ const Section: React.FC<{
 };
 
 const OrdersScreen = () => (
-  <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
     <Text category="h1">ORDERS</Text>
   </Layout>
 );
 
-const BottomTabBar = ({ navigation, state }) => (
+const BottomTabBar = ({navigation, state}) => (
   <BottomNavigation
     selectedIndex={state.index}
     onSelect={index => navigation.navigate(state.routeNames[index])}>
