@@ -1158,12 +1158,12 @@
     color "^3.1.3"
     react-native-iphone-x-helper "^1.3.0"
 
-"@react-navigation/core@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-6.0.0.tgz#6c793bd6e05137c79eaafd89367fb08f6424cb17"
-  integrity sha512-CDn09TOOeADqAXUWIenIuWRsIels5d5HAs+PyFn5+fvWv0QZK0vpViOyIsIPRYc0CnTHFNTU62xhEMyvZKDIdw==
+"@react-navigation/core@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-6.0.1.tgz#4424ee1f83e2e305ef80d27c2778fb82fba852a0"
+  integrity sha512-mVdvBDYdz8uzLQHokmVdX/xC4rS7NIkD1FN/yaGdovVzYApAhM+UGd3w1zskjyCSyXaVHHOwV59ZGVew+84xfQ==
   dependencies:
-    "@react-navigation/routers" "^6.0.0"
+    "@react-navigation/routers" "^6.0.1"
     escape-string-regexp "^4.0.0"
     nanoid "^3.1.23"
     query-string "^7.0.0"
@@ -1183,18 +1183,18 @@
     warn-once "^0.1.0"
 
 "@react-navigation/native@^5.11.11":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-6.0.0.tgz#94bd98300ed0dd3d8b7d94afda049bd1a3632274"
-  integrity sha512-dfxMsH+dU1WMhujmU4StIEysVhHclTlWgn5AGUDfi4+EQRA1quNWjj+fyFfUoy2W7sMNu/x8OncCfmH3AuEchw==
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-6.0.1.tgz#1d8047b2b91b5adadb7f1d9b4f3499d9e16d36b3"
+  integrity sha512-hzp+c21hCrHWcvV78cTBWlabsZSgtaSkdzNc0GWum94MtjBEUTcgewxjEDKPwXyUwouEX/319jzrCusJ2Bzxog==
   dependencies:
-    "@react-navigation/core" "^6.0.0"
+    "@react-navigation/core" "^6.0.1"
     escape-string-regexp "^4.0.0"
     nanoid "^3.1.23"
 
-"@react-navigation/routers@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-6.0.0.tgz#096aa621d25e69e8fb23a429745387294c108533"
-  integrity sha512-bMYFHNXPWyYwPLnzBKJ2E0I+8u3ayJBfkyhdT42s/rG/kRjVe+STSIRVtZqtIn6afCwg6NR0fOGqLY8BNfT5Zg==
+"@react-navigation/routers@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-6.0.1.tgz#ae50f07c776c18bd9fdc87f17e9f3afc3fd59d19"
+  integrity sha512-5ctB49rmtTRQuTSBVgqMsEzBUjPP2ByUzBjNivA7jmvk+PDCl4oZsiR8KAm/twhxe215GYThfi2vUWXKAg6EEQ==
   dependencies:
     nanoid "^3.1.23"
 
