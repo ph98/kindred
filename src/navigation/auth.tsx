@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const AuthStack = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Login" component={LoginPage} />
         <Stack.Screen name="Main" component={MainNavigation} />
       </Stack.Navigator>
