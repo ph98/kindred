@@ -1,22 +1,24 @@
 import React, {useState} from 'react';
-import {Button, Input, Layout, Text, StyleService} from '@ui-kitten/components';
+import {
+  Button,
+  Input,
+  Layout,
+  Text,
+  StyleService,
+} from '@ui-kitten/components';
 import {View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
-import {axios} from '../../utils';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
 
 const LoginPage: React.FC<Props> = ({navigation}) => {
-  const [phone, setphone] = useState('+989910472915');
+  const [phone, setphone] = useState('');
   const login = () => {
     console.log('phone', phone);
-    axios.post('/api/users/sign-up', {phone_number: phone}).then(({data}) => {
-      console.log('data', data);
-      navigation.navigate('Otp');
-    });
+    navigation.navigate('Main');
   };
   return (
     <Layout style={styles.container}>
@@ -32,7 +34,6 @@ const LoginPage: React.FC<Props> = ({navigation}) => {
           <Input
             // textStyle={{ ... }}
             keyboardType="number-pad"
-            value={phone}
             onChangeText={setphone}
             label={evaProps => <Text {...evaProps}>Phone number</Text>}
           />

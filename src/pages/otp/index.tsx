@@ -3,45 +3,36 @@ import {Button, Input, Layout, Text, StyleService} from '@ui-kitten/components';
 import {View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
-import {axios} from '../../utils';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
 
-const LoginPage: React.FC<Props> = ({navigation}) => {
-  const [phone, setphone] = useState('+989910472915');
-  const login = () => {
+const OtpPage: React.FC<Props> = ({navigation}) => {
+  const [phone, setphone] = useState('');
+  const verify = () => {
     console.log('phone', phone);
-    axios.post('/api/users/sign-up', {phone_number: phone}).then(({data}) => {
-      console.log('data', data);
-      navigation.navigate('Otp');
-    });
+    navigation.navigate('Main');
   };
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
         <Text style={styles.title}>Kindred</Text>
-        <Text style={styles.hi}>Hi!</Text>
-        <Text style={styles.text}>
-          Welcome to Kindred! for start using the app please login into you'r
-          account
-        </Text>
+        <Text style={styles.hi}>Please enter your OTP</Text>
 
         <View style={styles.form}>
           <Input
             // textStyle={{ ... }}
             keyboardType="number-pad"
-            value={phone}
             onChangeText={setphone}
             label={evaProps => <Text {...evaProps}>Phone number</Text>}
           />
           <View>
             <Button
               onPress={() => {
-                login();
+                verify();
               }}>
-              <Text> Login / Sign up </Text>
+              <Text> Verify! </Text>
             </Button>
           </View>
         </View>
@@ -50,7 +41,7 @@ const LoginPage: React.FC<Props> = ({navigation}) => {
   );
 };
 
-export default LoginPage;
+export default OtpPage;
 
 const styles = StyleService.create({
   container: {

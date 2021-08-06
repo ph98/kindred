@@ -1,3 +1,3 @@
-const serverAddress = 'api.kindred.tempserver.ir';
+const serverAddress = 'https://api.kindred.tempserver.ir';
 
 export {serverAddress};
