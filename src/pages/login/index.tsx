@@ -12,11 +12,10 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 const LoginPage: React.FC<Props> = ({navigation}) => {
   const [phone, setphone] = useState('+989910472915');
   const login = () => {
-    console.log('phone', phone);
-    axios.post('/api/users/sign-up', {phone_number: phone}).then(({data}) => {
-      console.log('data', data);
-      navigation.navigate('Otp');
-    });
+    // axios.post('/api/users/sign-up', {phone_number: phone}).then(({data}) => {
+    //   console.log('data', data);
+    navigation.navigate('Otp');
+    // });
   };
   return (
     <Layout style={styles.container}>

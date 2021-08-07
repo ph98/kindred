@@ -9,9 +9,8 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 }
 
 const OtpPage: React.FC<Props> = ({navigation}) => {
-  const [phone, setphone] = useState('');
+  const [otp, setotp] = useState('');
   const verify = () => {
-    console.log('phone', phone);
     navigation.navigate('Main');
   };
   return (
@@ -24,8 +23,10 @@ const OtpPage: React.FC<Props> = ({navigation}) => {
           <Input
             // textStyle={{ ... }}
             keyboardType="number-pad"
-            onChangeText={setphone}
-            label={evaProps => <Text {...evaProps}>Phone number</Text>}
+            onChangeText={setotp}
+            label={evaProps => (
+              <Text {...evaProps}>Enter your verification code</Text>
+            )}
           />
           <View>
             <Button
