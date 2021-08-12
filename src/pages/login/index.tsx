@@ -4,6 +4,7 @@ import {View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
 import {axios} from '../../utils';
+import Toast from 'react-native-toast-message';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
@@ -12,10 +13,11 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 const LoginPage: React.FC<Props> = ({navigation}) => {
   const [phone, setphone] = useState('+989910472915');
   const login = () => {
-    // axios.post('/api/users/sign-up', {phone_number: phone}).then(({data}) => {
-    //   console.log('data', data);
-    navigation.navigate('Otp');
-    // });
+    axios.post('/api/users/sign-up', {phone_number: phone}).then(({data}) => {
+      console.log('data', data);
+      Toast.show({type: 'success', text1: data.message, text2: '' + data.otp});
+      navigation.navigate('Otp', {phone});
+    });
   };
   return (
     <Layout style={styles.container}>

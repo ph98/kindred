@@ -3,25 +3,40 @@ import {Button, Input, Layout, Text, StyleService} from '@ui-kitten/components';
 import {View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
+import {axios} from '../../utils';
+import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
 
-const OtpPage: React.FC<Props> = ({navigation}) => {
+const OtpPage: React.FC<Props> = ({navigation, route}) => {
   const [otp, setotp] = useState('');
   const verify = () => {
-    navigation.navigate('Main');
+    const {phone} = route.params;
+    axios
+      .post('/api/users/confirm-signup', {phone_number: phone, otp})
+      .then(({data}) => {
+        Toast.show({text1: data.message, type: 'success'});
+        console.log('data', data);
+
+        AsyncStorage.setItem('refresh', JSON.stringify(data.tokens.refresh));
+        AsyncStorage.setItem('user', JSON.stringify(data.user));
+        AsyncStorage.setItem('access', JSON.stringify(data.tokens.access)).then(
+          () => {
+            navigation.navigate('Main');
+          },
+        );
+      });
   };
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
         <Text style={styles.title}>Kindred</Text>
         <Text style={styles.hi}>Please enter your OTP</Text>
-
         <View style={styles.form}>
           <Input
-            // textStyle={{ ... }}
             keyboardType="number-pad"
             onChangeText={setotp}
             label={evaProps => (
