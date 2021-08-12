@@ -20,12 +20,15 @@ const OtpPage: React.FC<Props> = ({navigation, route}) => {
       .then(({data}) => {
         Toast.show({text1: data.message, type: 'success'});
         console.log('data', data);
-
         AsyncStorage.setItem('refresh', JSON.stringify(data.tokens.refresh));
         AsyncStorage.setItem('user', JSON.stringify(data.user));
         AsyncStorage.setItem('access', JSON.stringify(data.tokens.access)).then(
           () => {
-            navigation.navigate('Main');
+            if (data.user.is_completed) {
+              navigation.navigate('Main');
+            } else {
+              navigation.navigate('CompleteProfile');
+            }
           },
         );
       });

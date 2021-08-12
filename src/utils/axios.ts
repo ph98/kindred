@@ -11,7 +11,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   async config => {
-    const token = await AsyncStorage.getItem('accessToken');
+    const token = JSON.parse((await AsyncStorage.getItem('access')) || '');
     const temp = config;
     if (token) {
       temp.headers.Authorization = `Bearer ${token}`;
@@ -26,7 +26,7 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   response => response,
   error => {
-    console.log('1', error.response.status);
+    console.log('[ERR from AXIOS]', error.response.status || error.response);
     const originalRequest = error.config;
     if (!error) {
       Toast.show({
@@ -88,15 +88,17 @@ instance.interceptors.response.use(
       console.log('error', error.response || error);
     } else if (error.response.status === 401 && !originalRequest.retry) {
       originalRequest.retry = true;
-      return AsyncStorage.getItem('refreshToken')
-        .then(refreshToken =>
+      return AsyncStorage.getItem('refresh')
+        .then(refresh => JSON.parse(refresh || ''))
+        .then(refresh =>
           axios
-            .post(`${serverAddress}/api/v1/auth/token`, {
-              refresh_token: refreshToken,
+            .post(`${serverAddress}/api/users/token/refresh/`, {
+              refresh,
             })
             .then(({data}) => {
+              console.log('[data]', data);
               try {
-                AsyncStorage.setItem('accessToken', String(data.access_token));
+                AsyncStorage.setItem('access', String(data.access_token));
               } catch (err) {
                 console.log(err);
               }
@@ -106,19 +108,21 @@ instance.interceptors.response.use(
               return instance(originalRequest);
             })
             .catch(err => {
+              console.log('[err]', err.response.data);
               if (err.response.status === 401) {
                 Toast.show({
                   type: 'error',
                   text1: 'Your token is expired, please login again.',
                 });
               }
-              Promise.reject(error);
+              // AsyncStorage.clear();
+              return Promise.reject(error);
             }),
         )
         .catch(() => {
           Toast.show({type: 'error', text1: `${error.response.data}`});
-        })
-        .catch(() => Promise.reject(error));
+          return Promise.reject(error);
+        });
     }
     return Promise.reject(error);
   },

@@ -12,9 +12,7 @@ const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
   console.log('isDarkMode', isDarkMode);
   return (
-    <ApplicationProvider
-      {...eva}
-      theme={isDarkMode ? {...eva.dark, ...theme} : {...eva.light, ...theme}}>
+    <ApplicationProvider {...eva} theme={{...eva.light, ...theme}}>
       <AuthStack />
       <Toast ref={ref => Toast.setRef(ref)} />
     </ApplicationProvider>
