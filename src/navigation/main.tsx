@@ -11,6 +11,8 @@ import Chat from '../pages/chat';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from './navigationParams';
 import ProfilePage from '../pages/profile/profile';
+import CreateFamily from '../pages/createFamily';
+import JoinFamily from '../pages/joinFamily';
 const {Navigator, Screen} = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<NavigationStackParamList>();
 
@@ -41,6 +43,8 @@ const MainNavigation = () => {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Tabs" component={TabNavigator} />
       <Stack.Screen name="Profile" component={ProfilePage} />
+      <Stack.Screen name="JoinFamily" component={JoinFamily} />
+      <Stack.Screen name="CreateFamily" component={CreateFamily} />
     </Stack.Navigator>
   );
 };

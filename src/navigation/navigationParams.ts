@@ -7,4 +7,6 @@ export type NavigationStackParamList = {
   Profile: undefined;
   Tabs: undefined;
   SelectFamily: undefined;
+  JoinFamily: undefined;
+  CreateFamily: undefined;
 };

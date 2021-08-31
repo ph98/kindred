@@ -1,56 +1,54 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Layout, StyleService, Text} from '@ui-kitten/components';
-import React, {useEffect, useState} from 'react';
-import {Pressable} from 'react-native';
-
-export const SelectFamily = ({navigation}) => {
-  const [userData, setUser] = useState({});
-  useEffect(() => {
+import {Input, Layout, StyleService, Text, Button} from '@ui-kitten/components';
+import React from 'react';
+import {useState} from 'react';
+// import { Image } from 'react-native-svg';
+import Toast from 'react-native-toast-message';
+import {axios} from '../../utils';
+const JoinFamily = ({navigation}) => {
+  const [code, setCode] = useState('');
+  const submit = () => {
     AsyncStorage.getItem('user')
       .then(user => JSON.parse(user || '{}'))
       .then(user => {
-        console.log('user', user);
-        setUser(user);
+        const data = {
+          phone_number: user.phone_number,
+          invitation_code: code,
+        };
+
+        axios.post('/api/kindreds/confirm-invite/', data).then(({data}) => {
+          console.log(data);
+          Toast.show({text1: data.message, type: 'success'});
+          navigation.pop();
+        });
       });
-  }, []);
+  };
+
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
         <Text style={styles.hi}>Kindred</Text>
-        <Text style={styles.title}>Please select</Text>
+        <Text style={styles.title}>Please Enter your invitation code</Text>
 
         <Layout style={styles.inner}>
-          {/* {
-                userData.kindreds.map
-            }
-             */}
-          <Pressable
-            style={styles.buttonStyle}
-            onPress={() => {
-              navigation.navigate('Main', {screen: 'CreateFamily'});
-            }}>
-            <Text style={styles.buttonTitle}>Submit a family</Text>
-            <Text style={styles.buttonDescription}>
-              If your family is new to kindred!
-            </Text>
-          </Pressable>
-          <Pressable
-            style={styles.buttonStyle}
-            onPress={() => {
-              navigation.navigate('Main', {screen: 'JoinFamily'});
-            }}>
-            <Text style={styles.buttonTitle}>Join a family</Text>
-            <Text style={styles.buttonDescription}>
-              If your family exists in kindred!
-            </Text>
-          </Pressable>
+          <Input
+            placeholder="Your invite code"
+            value={code}
+            onChangeText={(nextValue: string) => setCode(nextValue)}
+          />
+          <Button style={styles.modalButtonItem} onPress={() => submit()}>
+            Join!
+          </Button>
         </Layout>
       </Layout>
     </Layout>
   );
 };
 
+export default JoinFamily;
+
 const styles = StyleService.create({
+  modalButtonItem: {marginBottom: 10},
   buttonDescription: {},
   buttonTitle: {
     fontWeight: 'bold',
