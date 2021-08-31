@@ -9,18 +9,23 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 }
 
 const Loading: React.FC<Props> = ({navigation}) => {
+  // AsyncStorage.clear();
   useEffect(() => {
     AsyncStorage.getItem('access').then(access => {
       if (access) {
         AsyncStorage.getItem('user')
           .then(user => JSON.parse(user || '{}'))
           .then(user => {
-            console.log('user', user);
-            if (user.is_completed) {
-              navigation.replace('Main');
-            } else {
-              navigation.replace('CompleteProfile');
-            }
+            AsyncStorage.getItem('selected_family').then(SelectedFamily => {
+              console.log('user, SelectedFamily', user, SelectedFamily);
+              if (user.is_completed && SelectedFamily) {
+                navigation.replace('Main');
+              } else if (user.is_completed) {
+                navigation.replace('SelectFamily');
+              } else {
+                navigation.replace('CompleteProfile');
+              }
+            });
           });
       } else {
         navigation.replace('Login');

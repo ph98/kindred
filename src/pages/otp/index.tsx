@@ -24,11 +24,8 @@ const OtpPage: React.FC<Props> = ({navigation, route}) => {
         AsyncStorage.setItem('user', JSON.stringify(data.user));
         AsyncStorage.setItem('access', JSON.stringify(data.tokens.access)).then(
           () => {
-            if (data.user.is_completed) {
-              navigation.navigate('Main');
-            } else {
-              navigation.navigate('CompleteProfile');
-            }
+            navigation.popToTop();
+            navigation.replace('Loading');
           },
         );
       });

@@ -11,10 +11,11 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   async config => {
-    const token = JSON.parse((await AsyncStorage.getItem('access')) || '');
+    const token = await AsyncStorage.getItem('access');
+    console.log('token', token);
     const temp = config;
     if (token) {
-      temp.headers.Authorization = `Bearer ${token}`;
+      temp.headers.Authorization = `Bearer ${JSON.parse(token)}`;
     }
     return temp;
   },
@@ -26,7 +27,7 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   response => response,
   error => {
-    console.log('[ERR from AXIOS]', error.response.status || error.response);
+    console.log('[ERR from AXIOS]', error.response?.status);
     const originalRequest = error.config;
     if (!error) {
       Toast.show({
@@ -53,6 +54,7 @@ instance.interceptors.response.use(
       error.response.status === 400 ||
       error.response.status === 403 ||
       error.response.status === 406 ||
+      error.response.status === 401 ||
       error.response.status === 404
     ) {
       if (

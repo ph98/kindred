@@ -5,6 +5,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
 import MapView, {Marker} from 'react-native-maps';
 import Geolocation, {GeoCoordinates} from 'react-native-geolocation-service';
+import {Header} from '../../components/header/header';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
@@ -40,6 +41,7 @@ const Map: React.FC<Props> = ({navigation}) => {
   }, []);
   return (
     <Layout style={styles.container}>
+      <Header />
       <MapView
         style={styles.map}
         showsUserLocation

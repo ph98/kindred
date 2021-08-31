@@ -8,7 +8,11 @@ import {BottomNavigation, BottomNavigationTab} from '@ui-kitten/components';
 import Map from '../pages/map';
 import ShoppingList from '../pages/shoppingList';
 import Chat from '../pages/chat';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {NavigationStackParamList} from './navigationParams';
+import ProfilePage from '../pages/profile/profile';
 const {Navigator, Screen} = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<NavigationStackParamList>();
 
 interface Props extends BottomTabBarProps<BottomTabBarOptions> {
   state: any;
@@ -33,7 +37,12 @@ const TabNavigator = () => (
 );
 
 const MainNavigation = () => {
-  return <TabNavigator />;
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Tabs" component={TabNavigator} />
+      <Stack.Screen name="Profile" component={ProfilePage} />
+    </Stack.Navigator>
+  );
 };
 
 export default MainNavigation;

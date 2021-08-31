@@ -4,4 +4,7 @@ export type NavigationStackParamList = {
   Main: undefined;
   Otp: {phone: string};
   CompleteProfile: undefined;
+  Profile: undefined;
+  Tabs: undefined;
+  SelectFamily: undefined;
 };

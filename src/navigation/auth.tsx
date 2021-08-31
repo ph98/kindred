@@ -7,6 +7,7 @@ import OtpPage from '../pages/otp';
 import CompleteProfile from '../pages/completeProfile';
 import {NavigationStackParamList} from './navigationParams';
 import Loading from '../pages/loading';
+import {SelectFamily} from '../pages/selectFamily';
 const Stack = createNativeStackNavigator<NavigationStackParamList>();
 
 export const AuthStack = () => {
@@ -18,6 +19,8 @@ export const AuthStack = () => {
         <Stack.Screen name="Otp" component={OtpPage} />
         <Stack.Screen name="CompleteProfile" component={CompleteProfile} />
         <Stack.Screen name="Main" component={MainNavigation} />
+        <Stack.Screen name="SelectFamily" component={SelectFamily} />
+        {/* SelectFamily */}
       </Stack.Navigator>
     </NavigationContainer>
   );
