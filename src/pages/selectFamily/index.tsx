@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Layout, StyleService, Text} from '@ui-kitten/components';
+import {Avatar, Layout, StyleService, Text} from '@ui-kitten/components';
 import React, {useEffect, useState} from 'react';
-import {Pressable} from 'react-native';
+import {Pressable, FlatList} from 'react-native';
+// import {  } from 'react-native-gesture-handler';
 
 export const SelectFamily = ({navigation}) => {
   const [userData, setUser] = useState({});
@@ -24,6 +25,26 @@ export const SelectFamily = ({navigation}) => {
                 userData.kindreds.map
             }
              */}
+
+          <FlatList
+            style={{width: '100%'}}
+            data={userData.kindreds}
+            renderItem={({item}) => (
+              <Pressable
+                onPress={() => {
+                  AsyncStorage.setItem(
+                    'selected_family',
+                    JSON.stringify(item),
+                  ).then(() => {
+                    navigation.navigate('Main');
+                  });
+                }}
+                style={styles.KindredItems}>
+                <Avatar source={{uri: item.image}} />
+                <Text>{item.name}</Text>
+              </Pressable>
+            )}
+          />
           <Pressable
             style={styles.buttonStyle}
             onPress={() => {
@@ -51,6 +72,17 @@ export const SelectFamily = ({navigation}) => {
 };
 
 const styles = StyleService.create({
+  KindredItems: {
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 10,
+    margin: 10,
+    alignItems: 'center',
+    // width: '100%',
+    padding: 10,
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+  },
   buttonDescription: {},
   buttonTitle: {
     fontWeight: 'bold',
