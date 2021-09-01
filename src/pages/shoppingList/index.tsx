@@ -1,5 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Input, Layout, Modal, Text} from '@ui-kitten/components';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  Button,
+  CheckBox,
+  Icon,
+  Input,
+  Layout,
+  Modal,
+  Text,
+} from '@ui-kitten/components';
 import {Alert, StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
@@ -7,6 +15,7 @@ import {axios} from '../../utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import {FlatList} from 'react-native-gesture-handler';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
@@ -15,7 +24,9 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 const ShoppingList: React.FC<Props> = ({navigation}) => {
   const [value, setValue] = useState('');
   const [visible, setVisible] = useState(false);
-  useFocusEffect(() => {
+  const [shoppingItems, setShoppingItems] = useState([]);
+  const [filterWord, setFilterWord] = useState('');
+  const getItems = () => {
     AsyncStorage.getItem('selected_family')
       .then(data => JSON.parse(data || '{}'))
       .then(family => {
@@ -23,10 +34,32 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
           .get(`/api/kindreds/shopping-items?kindred=${family.id}`)
           .then(({data}) => {
             console.log('[ShoppingList]', data);
+            setShoppingItems(data);
           });
       });
-  });
-
+  };
+  useFocusEffect(
+    useCallback(() => {
+      getItems();
+    }, []),
+  );
+  const toggleBought = (id, bought) => {
+    console.log('id', id, bought);
+    AsyncStorage.getItem('selected_family')
+      .then(data => JSON.parse(data || '{}'))
+      .then(family => {
+        axios
+          .patch(`/api/kindreds/shopping-items/${id}/`, {
+            kindred: family.id,
+            is_bought: bought,
+          })
+          .then(({data}) => {
+            console.log('[data]', data);
+            getItems();
+            // setShoppingItems(data);
+          });
+      });
+  };
   const addShoppingItem = () => {
     AsyncStorage.getItem('selected_family')
       .then(data => JSON.parse(data || '{}'))
@@ -70,17 +103,61 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
       <Layout style={styles.container}>
         <Text> ShoppingList </Text>
 
+        <Input
+          placeholder="Search Items"
+          onChangeText={t => setFilterWord(t)}
+        />
+        <FlatList
+          data={shoppingItems
+            .filter(item => !item.is_bought)
+            .filter(item => item.name.includes(filterWord))}
+          renderItem={({item}) => (
+            <ShoppingItem toggleBought={toggleBought} data={item} />
+          )}
+        />
+
+        <Text> Bought Items: </Text>
+        <FlatList
+          data={shoppingItems
+            .filter(item => item.is_bought)
+            .filter(item => item.name.includes(filterWord))}
+          renderItem={({item}) => (
+            <ShoppingItem toggleBought={toggleBought} data={item} />
+          )}
+        />
         <Button
+          style={{position: 'absolute', bottom: 10, right: '30%', width: '40%'}}
           onPress={() => {
             setVisible(true);
           }}>
-          <Text>Add item</Text>
+          <Text>
+            Add item
+            {/* <Icon name="add" /> */}
+          </Text>
         </Button>
       </Layout>
     </>
   );
 };
-
+const ShoppingItem = ({data, toggleBought}) => (
+  <Layout
+    style={{
+      // backgroundColor: 'red',
+      borderBottomWidth: 1,
+      borderColor: '#e7f0ef',
+      margin: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+    }}>
+    <CheckBox
+      style={{margin: 10}}
+      checked={data.is_bought}
+      onChange={value => toggleBought(data.id, value)}
+    />
+    <Text>{data.name}</Text>
+    {/* <Text>{data.name}</Text> */}
+  </Layout>
+);
 export default ShoppingList;
 
 const styles = StyleSheet.create({
