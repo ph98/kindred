@@ -1,3 +1,4 @@
+// DEPRECATED AND UNUSED
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Input, Layout, Text, Button} from '@ui-kitten/components';
 import React, {useState} from 'react';
@@ -18,10 +19,10 @@ const InviteMember = ({navigation}) => {
             console.log('data', data);
 
             Share.share({
-              message: `You've invited to ${family.name}'s family in kindred app.
-            download app and enter this code to join the family!\n ${data.invitation_code}`,
+              message: `You are invited to ${family.name}'s family in kindred app.
+download app and enter this code to join the family!\n ${data.invitation_code}`,
             });
-            navigation.pop();
+            // navigation.pop();
           });
       });
   };

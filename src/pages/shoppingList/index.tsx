@@ -115,7 +115,6 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
             <ShoppingItem toggleBought={toggleBought} data={item} />
           )}
         />
-
         <Text> Bought Items: </Text>
         <FlatList
           data={shoppingItems

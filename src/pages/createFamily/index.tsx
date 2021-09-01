@@ -4,25 +4,19 @@ import {
   Layout,
   StyleService,
   Text,
-  Modal,
-  Card,
   Button,
   Avatar,
 } from '@ui-kitten/components';
-import {Image, Pressable, ScrollView} from 'react-native';
-import {
-  launchCamera,
-  launchImageLibrary,
-  ImagePickerResponse,
-} from 'react-native-image-picker';
+import {Pressable, ScrollView} from 'react-native';
+import {Asset} from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 
-import {Loading} from '../../components';
+import {Loading, ImagePickerModal} from '../../components';
 import {axios} from '../../utils';
 
 const CreateFamily = ({navigation}) => {
   const [name, setName] = useState('');
-  const [image, setImage] = useState();
+  const [image, setImage] = useState<Asset | null>(null);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -46,13 +40,6 @@ const CreateFamily = ({navigation}) => {
       .finally(() => {
         setLoading(false);
       });
-  };
-
-  const handleImagePick = (data: ImagePickerResponse) => {
-    if (data && data.assets?.length) {
-      setImage(data.assets[0]);
-      setVisible(false);
-    }
   };
 
   return (
@@ -85,29 +72,11 @@ const CreateFamily = ({navigation}) => {
               {loading ? <Loading /> : <Text>Submit!</Text>}
             </Button>
           </ScrollView>
-          <Modal visible={visible} onBackdropPress={() => setVisible(false)}>
-            <Card disabled>
-              <Button
-                style={styles.modalButtonItem}
-                onPress={() =>
-                  launchCamera({mediaType: 'photo'}, handleImagePick)
-                }>
-                Use your camera
-              </Button>
-              <Button
-                style={styles.modalButtonItem}
-                onPress={() =>
-                  launchImageLibrary({mediaType: 'photo'}, handleImagePick)
-                }>
-                Use your Gallery
-              </Button>
-              <Button
-                style={styles.modalButtonItem}
-                onPress={() => setVisible(false)}>
-                Cancel
-              </Button>
-            </Card>
-          </Modal>
+          <ImagePickerModal
+            visible={visible}
+            setVisible={setVisible}
+            setImage={setImage}
+          />
         </Layout>
       </Layout>
     </Layout>
