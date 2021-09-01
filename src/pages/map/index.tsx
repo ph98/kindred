@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Layout} from '@ui-kitten/components';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Avatar, Layout, Text} from '@ui-kitten/components';
 import {StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
@@ -14,6 +14,7 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
 const Map: React.FC<Props> = ({navigation}) => {
+  const [familyMembersLocations, setfamilyMembersLocations] = useState([]);
   const [position, setposition] = useState<GeoCoordinates>({
     latitude: 36.306306306306304,
     longitude: 59.585824202127284,
@@ -22,22 +23,25 @@ const Map: React.FC<Props> = ({navigation}) => {
     heading: 10,
     speed: 10,
   });
-  useFocusEffect(() => {
-    console.log('object');
-    AsyncStorage.getItem('selected_family')
-      .then(selected => JSON.parse(selected || '{}'))
-      .then(selected => {
-        axios
-          .post('/api/kindreds/locations/last-locations/', {
-            kindred: selected.id,
-          })
-          .then(({data}) => {
-            console.log('data', data);
-          });
+  useFocusEffect(
+    useCallback(() => {
+      console.log('object');
+      AsyncStorage.getItem('selected_family')
+        .then(selected => JSON.parse(selected || '{}'))
+        .then(selected => {
+          axios
+            .post('/api/kindreds/locations/last-locations/', {
+              kindred: selected.id,
+            })
+            .then(({data}) => {
+              console.log('data', data);
+              setfamilyMembersLocations(data);
+            });
 
-        // axios.get(`/api/kindreds/${selected.id}/members/`)
-      });
-  });
+          // axios.get(`/api/kindreds/${selected.id}/members/`)
+        });
+    }, []),
+  );
   useEffect(() => {
     // Geolocation.requestAuthorization().then(data => {
     //   console.log('data', data);
@@ -48,24 +52,15 @@ const Map: React.FC<Props> = ({navigation}) => {
         console.log('data', data);
         setposition(data.coords);
 
-        AsyncStorage.getItem('selected_family')
-          .then(selected => JSON.parse(selected || '{}'))
-          .then(selected => {
-            console.log(
-              'selected.id',
-              selected.id,
-              `${data.coords.latitude} ${data.coords.longitude}`,
-            );
-            axios
-              .post('/api/kindreds/locations/', {
-                coordinate: `${data.coords.latitude} ${data.coords.longitude}`,
-              })
-              .then(({data}) => {
-                console.log('data1', data);
-              })
-              .catch(err => {
-                console.log('err', err.response.data);
-              });
+        axios
+          .post('/api/kindreds/locations/', {
+            coordinate: `${data.coords.latitude} ${data.coords.longitude}`,
+          })
+          .then(({data}) => {
+            console.log('data1', data);
+          })
+          .catch(err => {
+            console.log('err', err.response.data);
           });
       },
       e => {
@@ -83,20 +78,49 @@ const Map: React.FC<Props> = ({navigation}) => {
       <Header />
       <MapView
         style={styles.map}
-        showsUserLocation
+        showsUserLocation={false}
         region={{
           latitude: position.latitude,
           longitude: position.longitude,
           latitudeDelta: 0.1,
           longitudeDelta: 0.1,
         }}>
-        <Marker coordinate={position} />
+        {familyMembersLocations.map(item => {
+          console.log('item', item.user.image);
+
+          return (
+            <CustomMarker
+              coords={{
+                latitude: Number(item.coordinate.split(' ')[0]),
+                longitude: Number(item.coordinate.split(' ')[1]),
+              }}
+              image={item.user.image}
+              name={item.user.first_name}
+              key={item.user.first_name}
+            />
+          );
+        })}
+        {/* <Marker coordinate={position} /> */}
       </MapView>
     </Layout>
   );
 };
 
 export default Map;
+
+const CustomMarker = ({name, image, coords}) => {
+  const [showtooltip, setShowtooltip] = useState(false);
+  return (
+    <Marker coordinate={coords} onPress={() => setShowtooltip(!showtooltip)}>
+      <Avatar source={{uri: image}} />
+      {showtooltip && (
+        <Layout style={{position: 'absolute'}}>
+          <Text>{name}</Text>
+        </Layout>
+      )}
+    </Marker>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
