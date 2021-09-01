@@ -95,7 +95,7 @@ const Map: React.FC<Props> = ({navigation}) => {
                 longitude: Number(item.coordinate.split(' ')[1]),
               }}
               image={item.user.image}
-              name={item.user.first_name}
+              name={`${item.user.first_name} ${item.user.last_name}`}
               key={item.user.first_name}
             />
           );
@@ -109,15 +109,14 @@ const Map: React.FC<Props> = ({navigation}) => {
 export default Map;
 
 const CustomMarker = ({name, image, coords}) => {
-  const [showtooltip, setShowtooltip] = useState(false);
+  // const [showtooltip, setShowtooltip] = useState(true);
   return (
-    <Marker coordinate={coords} onPress={() => setShowtooltip(!showtooltip)}>
+    <Marker
+      title={name}
+      coordinate={coords}
+      // onPress={() => setShowtooltip(!showtooltip)}
+    >
       <Avatar source={{uri: image}} />
-      {showtooltip && (
-        <Layout style={{position: 'absolute'}}>
-          <Text>{name}</Text>
-        </Layout>
-      )}
     </Marker>
   );
 };
