@@ -82,14 +82,16 @@ const ChatSingle: React.FC<Props> = ({navigation, route}) => {
           <Layout style={{margin: 10}}>
             <Layout>
               {console.log(item)}
-              <Text
-                style={{
-                  backgroundColor: item.sent_from_me ? '#008ac6' : '#8f9bb3',
-                  padding: 10,
-                  width: 'auto',
-                }}>
-                {item.content}
-              </Text>
+              <Layout style={{flexDirection: 'row'}}>
+                <Text
+                  style={{
+                    backgroundColor: item.sent_from_me ? '#008ac6' : '#8f9bb3',
+                    padding: 10,
+                  }}>
+                  {item.content}
+                </Text>
+                <Text />
+              </Layout>
               <Text>{dayjs(item.created_at * 1000).format('HH:mm')}</Text>
             </Layout>
           </Layout>
