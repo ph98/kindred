@@ -51,7 +51,6 @@ const MainNavigation = () => {
       <Stack.Screen name="FamilyMembers" component={FamilyMembers} />
       <Stack.Screen name="InviteMember" component={InviteMember} />
       <Stack.Screen name="ChatSingle" component={ChatSingle} />
-      {/* ChatSingle */}
     </Stack.Navigator>
   );
 };

@@ -1,17 +1,21 @@
+import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {Avatar, Button, Icon, Layout, Text} from '@ui-kitten/components';
-import React, {useEffect, useState} from 'react';
-import {FlatList, Pressable, StyleSheet} from 'react-native';
+import {FlatList, Pressable, StyleSheet, Share} from 'react-native';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
+
+import {InviteModal, PopOver} from '../../components';
 import {axios} from '../../utils';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
 const FamilyMembers: React.FC<Props> = ({navigation}) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const [familyMembers, setFamilyMembers] = useState([]);
   const [familyData, setFamilyData] = useState({});
+  const [phone, setPhone] = useState('+989910472916');
 
   useEffect(() => {
     try {
@@ -25,18 +29,38 @@ const FamilyMembers: React.FC<Props> = ({navigation}) => {
             console.log('data', data);
             setFamilyMembers(data);
           });
-          //  setFamilyMembers(kindred)
         });
     } catch (err) {
       console.log('err', err);
     }
-    // console.log(`object`, object)
   }, []);
+
+  const invite = () => {
+    AsyncStorage.getItem('selected_family')
+      .then(data => JSON.parse(data || '{}'))
+      .then(family => {
+        axios
+          .post(`/api/kindreds/${family.id}/invite/`, {
+            phone_number: phone,
+          })
+          .then(({data}) => {
+            console.log('data', data);
+            Share.share({
+              message: `You've invited to ${family.name}'s family in kindred app.
+            download app and enter this code to join the family!\n ${data.invitation_code}`,
+            });
+            setModalVisible(false);
+          });
+      });
+  };
+
   return (
     <Layout style={styles.page}>
-      <Text>{familyData.name}'s family members:</Text>
+      <Text style={styles.headerText}>{familyData.name}'s family members:</Text>
       <FlatList
+        style={styles.flatList}
         data={familyMembers}
+        keyExtractor={item => `${item.id}`}
         renderItem={({item}) => (
           <FamilyItem
             image={item.user.image}
@@ -45,54 +69,109 @@ const FamilyMembers: React.FC<Props> = ({navigation}) => {
         )}
       />
       <Button
+        style={styles.btn}
         onPress={() => {
-          navigation.navigate('InviteMember');
+          setModalVisible(true);
         }}>
-        <Text>ivnite new member</Text>
+        <Text>Invite new member</Text>
       </Button>
       <Button
-        style={{margin: 10}}
+        style={styles.btn}
         onPress={() => {
           navigation.navigate('SelectFamily');
         }}>
         <Text>Choose another family!</Text>
       </Button>
+      <InviteModal
+        visible={modalVisible}
+        setVisible={setModalVisible}
+        phone={phone}
+        setPhone={setPhone}
+        onInvite={invite}
+      />
     </Layout>
   );
 };
 
-const FamilyItem = ({image, name, isAdmin, onDelete, onChangeAdmin}) => (
-  <Layout style={styles.FamilyItem}>
-    <Avatar source={{uri: image}} />
-    <Text>{name}</Text>
-    <Pressable style={styles.icon}>
-      <Icon style={styles.icon} fill="#8F9BB3" name="arrow-down-outline" />
-    </Pressable>
-  </Layout>
-);
+const FamilyItem = ({
+  image,
+  name,
+  isAdmin,
+  onRemove = () => {},
+  onChangeAdmin = () => {},
+}) => {
+  const [popOverVisible, setPopOverVisible] = useState(false);
+
+  const renderPopOverToggleButton = () => {
+    return (
+      <Pressable
+        onPress={() => {
+          setPopOverVisible(true);
+        }}>
+        <Icon style={styles.icon} fill="#8F9BB3" name="arrow-down-outline" />
+      </Pressable>
+    );
+  };
+
+  return (
+    <Layout style={styles.FamilyItem}>
+      <Avatar source={{uri: image}} style={styles.avatar} />
+      <Text style={styles.flex}>{name}</Text>
+      <PopOver
+        visible={popOverVisible}
+        setVisible={setPopOverVisible}
+        onRemove={() => {
+          onRemove();
+          setPopOverVisible(false);
+        }}
+        onUpgrade={() => {
+          onChangeAdmin();
+          setPopOverVisible(false);
+        }}
+        renderToggleButton={renderPopOverToggleButton}
+      />
+    </Layout>
+  );
+};
 export default FamilyMembers;
 
 const styles = StyleSheet.create({
+  avatar: {
+    marginRight: 10,
+  },
   page: {
-    alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 10,
-    flex: 1,
+    flexGrow: 1,
     paddingBottom: 10,
+    padding: 15,
   },
   FamilyItem: {
     flexDirection: 'row',
     width: '100%',
     borderBottomWidth: 1,
     borderColor: '#e7f0ef',
-    margin: 10,
-    padding: 10,
+    padding: 15,
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   icon: {
-    backgroundColor: 'red',
     width: 32,
     height: 32,
+  },
+  btn: {
+    width: '100%',
+    maxWidth: 500,
+    marginVertical: 10,
+  },
+  headerText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  flatList: {
+    width: '100%',
+  },
+  flex: {
+    flex: 1,
   },
 });

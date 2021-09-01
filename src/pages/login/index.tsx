@@ -51,6 +51,7 @@ const LoginPage: React.FC<Props> = ({navigation}) => {
             value={phone}
             onChangeText={setphone}
             label={evaProps => <Text {...evaProps}>Phone number</Text>}
+            onSubmitEditing={login}
           />
           <View>
             <Button

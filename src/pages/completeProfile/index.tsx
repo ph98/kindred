@@ -8,8 +8,6 @@ import {
   StyleService,
   Avatar,
   useStyleSheet,
-  Card,
-  Modal,
 } from '@ui-kitten/components';
 import {Pressable, ScrollView} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -17,15 +15,10 @@ import {NavigationStackParamList} from '../../navigation/navigationParams';
 import {axios} from '../../utils';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  launchCamera,
-  launchImageLibrary,
-  Asset,
-  ImagePickerResponse,
-} from 'react-native-image-picker';
+import {Asset} from 'react-native-image-picker';
 import dayjs from 'dayjs';
 
-import {Loading} from '../../components';
+import {Loading, ImagePickerModal} from '../../components';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
@@ -73,13 +66,6 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
       .finally(() => {
         setLoading(false);
       });
-  };
-
-  const handleImagePick = (data: ImagePickerResponse) => {
-    if (data && data.assets?.length) {
-      setImage(data.assets[0]);
-      setVisible(false);
-    }
   };
 
   return (
@@ -138,30 +124,11 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
           </Layout>
         </ScrollView>
       </Layout>
-      <Modal
-        backdropStyle={styles.backDrop}
+      <ImagePickerModal
         visible={visible}
-        onBackdropPress={() => setVisible(false)}>
-        <Card disabled={true}>
-          <Button
-            style={styles.modalButtonItem}
-            onPress={() => launchCamera({mediaType: 'photo'}, handleImagePick)}>
-            Use your camera
-          </Button>
-          <Button
-            style={styles.modalButtonItem}
-            onPress={() =>
-              launchImageLibrary({mediaType: 'photo'}, handleImagePick)
-            }>
-            Use your Gallery
-          </Button>
-          <Button
-            style={styles.modalButtonItem}
-            onPress={() => setVisible(false)}>
-            Cancel
-          </Button>
-        </Card>
-      </Modal>
+        setVisible={setVisible}
+        setImage={setImage}
+      />
     </Layout>
   );
 };

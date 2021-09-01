@@ -31,6 +31,7 @@ const ProfilePage: React.FC<Props> = ({navigation}) => {
   const [userData, setUserData] = useState({});
   const [name, setName] = useState({});
   const [lastname, setLastname] = useState({});
+
   useEffect(() => {
     try {
       AsyncStorage.getItem('user')
@@ -46,6 +47,7 @@ const ProfilePage: React.FC<Props> = ({navigation}) => {
     }
     // console.log(`object`, object)
   }, []);
+
   return (
     <Layout style={[styles.container, styles.fullWidth]}>
       <Header navigation={navigation} />
