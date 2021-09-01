@@ -28,7 +28,7 @@ export const Header = () => {
         }}>
         <Avatar source={{uri: user.image}} />
       </Pressable>
-      <Text> Kindred</Text>
+      <Text style={{color: '#02676F', fontWeight: 'bold'}}> Kindred</Text>
       <Pressable
         onPress={() => {
           navigation.navigate('FamilyMembers');

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Avatar, Layout, Text} from '@ui-kitten/components';
+import {Avatar, Input, Layout, Text} from '@ui-kitten/components';
 import {StyleSheet, FlatList, Pressable} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
@@ -14,6 +14,7 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 
 const Chat: React.FC<Props> = ({navigation}) => {
   const [chats, setChats] = useState([]);
+  const [filterString, setFilterString] = useState('');
   useEffect(() => {
     AsyncStorage.getItem('selected_family')
       .then(data => JSON.parse(data || '{}'))
@@ -29,7 +30,7 @@ const Chat: React.FC<Props> = ({navigation}) => {
   }, []);
   return (
     <Layout style={styles.container}>
-      <Text> Chat </Text>
+      <Input placeholder="Search" onChangeText={t => setFilterString(t)} />
       <FlatList
         renderItem={({item}) => (
           <ChatItem
@@ -42,7 +43,15 @@ const Chat: React.FC<Props> = ({navigation}) => {
             }
           />
         )}
-        data={chats}
+        data={chats.filter(
+          item =>
+            item.kindred_member.user.first_name
+              .toLowerCase()
+              .includes(filterString.toLowerCase()) ||
+            item.kindred_member.user.last_name
+              .toLowerCase()
+              .includes(filterString.toLowerCase()),
+        )}
       />
     </Layout>
   );

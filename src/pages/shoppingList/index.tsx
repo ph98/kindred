@@ -1,14 +1,13 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   Button,
   CheckBox,
-  Icon,
   Input,
   Layout,
   Modal,
   Text,
 } from '@ui-kitten/components';
-import {Alert, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
 import {axios} from '../../utils';
@@ -33,7 +32,6 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
         axios
           .get(`/api/kindreds/shopping-items?kindred=${family.id}`)
           .then(({data}) => {
-            console.log('[ShoppingList]', data);
             setShoppingItems(data);
           });
       });
@@ -73,6 +71,7 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
             console.log('data', data);
             Toast.show({text1: data.message});
             setVisible(false);
+            getItems();
           })
           .catch(err => {
             console.log('err', err.response.data);
@@ -91,7 +90,7 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
         <Input
           placeholder="what to buy?"
           onChangeText={t => setValue(t)}
-          value={value}
+          // value={value}
         />
         <Button
           onPress={() => {
@@ -101,13 +100,28 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
         </Button>
       </Modal>
       <Layout style={styles.container}>
-        <Text> ShoppingList </Text>
-
         <Input
           placeholder="Search Items"
           onChangeText={t => setFilterWord(t)}
         />
         <FlatList
+          ListHeaderComponent={
+            <Layout
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                flex: 1,
+                flexDirection: 'row',
+                padding: 10,
+              }}>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                }}>
+                Buy List
+              </Text>
+            </Layout>
+          }
           data={shoppingItems
             .filter(item => !item.is_bought)
             .filter(item => item.name.includes(filterWord))}
@@ -115,8 +129,24 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
             <ShoppingItem toggleBought={toggleBought} data={item} />
           )}
         />
-        <Text> Bought Items: </Text>
         <FlatList
+          ListHeaderComponent={
+            <Layout
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                flex: 1,
+                flexDirection: 'row',
+                padding: 10,
+              }}>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                }}>
+                Bought Items:
+              </Text>
+            </Layout>
+          }
           data={shoppingItems
             .filter(item => item.is_bought)
             .filter(item => item.name.includes(filterWord))}
@@ -129,10 +159,7 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
           onPress={() => {
             setVisible(true);
           }}>
-          <Text>
-            Add item
-            {/* <Icon name="add" /> */}
-          </Text>
+          <Text>Add item</Text>
         </Button>
       </Layout>
     </>
