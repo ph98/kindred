@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   Button,
   Input,
@@ -25,6 +25,8 @@ import {
 } from 'react-native-image-picker';
 import dayjs from 'dayjs';
 
+import {Loading} from '../../components';
+
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
@@ -32,11 +34,16 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 const CompleteProfile: React.FC<Props> = ({navigation}) => {
   const styles = useStyleSheet(themedStyles);
   const [visible, setVisible] = useState(false);
-  // ImagePickerResponse
+  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<Asset | null>(null);
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [date, setDate] = useState('');
+  const refferences = useRef({
+    lastName: '',
+    date: '',
+  });
+
   const complete = () => {
     const ProfileData = new FormData();
     ProfileData.append('first_name', firstname);
@@ -48,6 +55,8 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
       name: image?.fileName,
       type: image?.type,
     });
+
+    setLoading(true);
     axios
       .put('/api/users/complete-profile', ProfileData)
       .then(({data}) => {
@@ -59,6 +68,9 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
       })
       .catch(err => {
         console.log('err here', err.response);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -68,6 +80,7 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
       setVisible(false);
     }
   };
+
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
@@ -87,12 +100,17 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
               </Pressable>
             </Layout>
             <Input
+              autoFocus
               returnKeyType="next"
+              onSubmitEditing={() => refferences.current.lastName.focus()}
               style={styles.input}
               onChangeText={setFirstname}
               label={evaProps => <Text {...evaProps}>First Name</Text>}
             />
             <Input
+              ref={ref => {
+                refferences.current.lastName = ref;
+              }}
               returnKeyType="next"
               style={styles.input}
               onChangeText={setLastname}
@@ -106,16 +124,23 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
             />
             <Layout>
               <Button
-                disabled={!firstname || !lastname || !date}
+                disabled={!firstname || !lastname || !date || !image || loading}
                 style={styles.input}
                 onPress={complete}>
-                <Text> Start track your family! </Text>
+                {loading ? (
+                  <Loading />
+                ) : (
+                  <Text> Start track your family! </Text>
+                )}
               </Button>
             </Layout>
           </Layout>
         </ScrollView>
       </Layout>
-      <Modal visible={visible} onBackdropPress={() => setVisible(false)}>
+      <Modal
+        backdropStyle={styles.backDrop}
+        visible={visible}
+        onBackdropPress={() => setVisible(false)}>
         <Card disabled={true}>
           <Button
             style={styles.modalButtonItem}
@@ -186,10 +211,14 @@ const themedStyles = StyleService.create({
     marginTop: 10,
   },
   input: {
-    // marginVertical: 10,
+    marginVertical: 10,
   },
   scroll: {
     justifyContent: 'space-between',
-    flex: 1,
+    flexGrow: 1,
+  },
+  backDrop: {
+    backgroundColor: 'grey',
+    opacity: 0.9,
   },
 });

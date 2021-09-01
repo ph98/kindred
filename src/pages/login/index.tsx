@@ -3,22 +3,36 @@ import {Button, Input, Layout, Text, StyleService} from '@ui-kitten/components';
 import {View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
-import {axios} from '../../utils';
 import Toast from 'react-native-toast-message';
 
+import {axios} from '../../utils';
+import {Loading} from '../../components';
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
 
 const LoginPage: React.FC<Props> = ({navigation}) => {
   const [phone, setphone] = useState('+989910472915');
+  const [loading, setLoading] = useState(false);
+
   const login = () => {
-    axios.post('/api/users/sign-up', {phone_number: phone}).then(({data}) => {
-      console.log('data', data);
-      Toast.show({type: 'success', text1: data.message, text2: '' + data.otp});
-      navigation.navigate('Otp', {phone});
-    });
+    setLoading(true);
+    axios
+      .post('/api/users/sign-up', {phone_number: phone})
+      .then(({data}) => {
+        console.log('data', data);
+        Toast.show({
+          type: 'success',
+          text1: data.message,
+          text2: '' + data.otp,
+        });
+        navigation.navigate('Otp', {phone});
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
+
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
@@ -31,6 +45,7 @@ const LoginPage: React.FC<Props> = ({navigation}) => {
 
         <View style={styles.form}>
           <Input
+            autoFocus
             // textStyle={{ ... }}
             keyboardType="number-pad"
             value={phone}
@@ -39,10 +54,11 @@ const LoginPage: React.FC<Props> = ({navigation}) => {
           />
           <View>
             <Button
+              disabled={!phone || loading}
               onPress={() => {
                 login();
               }}>
-              <Text> Login / Sign up </Text>
+              {loading ? <Loading /> : <Text> Login / Sign up </Text>}
             </Button>
           </View>
         </View>

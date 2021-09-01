@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   Input,
   Layout,
@@ -8,21 +9,23 @@ import {
   Button,
   Avatar,
 } from '@ui-kitten/components';
-import React from 'react';
-import {useState} from 'react';
-import {Image, Pressable} from 'react-native';
-// import { Image } from 'react-native-svg';
+import {Image, Pressable, ScrollView} from 'react-native';
 import {
   launchCamera,
   launchImageLibrary,
   ImagePickerResponse,
 } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
+
+import {Loading} from '../../components';
 import {axios} from '../../utils';
+
 const CreateFamily = ({navigation}) => {
   const [name, setName] = useState('');
   const [image, setImage] = useState();
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const submit = () => {
     const ProfileData = new FormData();
     ProfileData.append('name', name);
@@ -31,49 +34,59 @@ const CreateFamily = ({navigation}) => {
       name: image?.fileName,
       type: image?.type,
     });
-    axios.post('/api/kindreds/', ProfileData).then(({data}) => {
-      console.log(data);
-      Toast.show({text1: data.message, type: 'success'});
-      navigation.pop();
-    });
+
+    setLoading(true);
+    axios
+      .post('/api/kindreds/', ProfileData)
+      .then(({data}) => {
+        console.log(data);
+        Toast.show({text1: data.message, type: 'success'});
+        navigation.pop();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
+
   const handleImagePick = (data: ImagePickerResponse) => {
     if (data && data.assets?.length) {
       setImage(data.assets[0]);
       setVisible(false);
     }
   };
+
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
         <Text style={styles.hi}>Kindred</Text>
         <Text style={styles.title}>Please tell us about your family</Text>
-
         <Layout style={styles.inner}>
-          {/* {
-              userData.kindreds.map
-          }
-           */}
-          <Pressable
-            // style={{wid}}
-            onPress={() => {
-              setVisible(true);
-            }}>
-            <Avatar
-              style={{width: 100, height: 100, margin: 10}}
-              source={image || require('../../assets/icon_add.png')}
+          <ScrollView contentContainerStyle={styles.scroll}>
+            <Pressable
+              onPress={() => {
+                setVisible(true);
+              }}>
+              <Avatar
+                style={styles.avatar}
+                source={image || require('../../assets/icon_add.png')}
+              />
+            </Pressable>
+            <Input
+              autoFocus
+              style={styles.input}
+              placeholder="What we should call your family?"
+              value={name}
+              onChangeText={(nextValue: string) => setName(nextValue)}
             />
-          </Pressable>
-          <Input
-            placeholder="What we should call your family?"
-            value={name}
-            onChangeText={(nextValue: string) => setName(nextValue)}
-          />
-          <Button style={styles.modalButtonItem} onPress={() => submit()}>
-            Submit!
-          </Button>
+            <Button
+              disabled={!name || !image || loading}
+              style={styles.modalButtonItem}
+              onPress={submit}>
+              {loading ? <Loading /> : <Text>Submit!</Text>}
+            </Button>
+          </ScrollView>
           <Modal visible={visible} onBackdropPress={() => setVisible(false)}>
-            <Card disabled={true}>
+            <Card disabled>
               <Button
                 style={styles.modalButtonItem}
                 onPress={() =>
@@ -104,7 +117,11 @@ const CreateFamily = ({navigation}) => {
 export default CreateFamily;
 
 const styles = StyleService.create({
-  modalButtonItem: {marginBottom: 10},
+  modalButtonItem: {
+    marginBottom: 10,
+    width: '100%',
+    maxWidth: 500,
+  },
   buttonDescription: {},
   buttonTitle: {
     fontWeight: 'bold',
@@ -154,5 +171,18 @@ const styles = StyleService.create({
     color: '#06514a',
     textAlign: 'center',
     marginTop: 10,
+  },
+  scroll: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexGrow: 1,
+  },
+  input: {
+    marginVertical: 10,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    margin: 10,
   },
 });

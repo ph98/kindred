@@ -3,18 +3,23 @@ import {Button, Input, Layout, Text, StyleService} from '@ui-kitten/components';
 import {View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
-import {axios} from '../../utils';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import {axios} from '../../utils';
+import {Loading} from '../../components';
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
 
 const OtpPage: React.FC<Props> = ({navigation, route}) => {
   const [otp, setotp] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const verify = () => {
     const {phone} = route.params;
+
+    setLoading(true);
     axios
       .post('/api/users/confirm-signup', {phone_number: phone, otp})
       .then(({data}) => {
@@ -28,8 +33,12 @@ const OtpPage: React.FC<Props> = ({navigation, route}) => {
             navigation.replace('Loading');
           },
         );
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
+
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
@@ -37,6 +46,8 @@ const OtpPage: React.FC<Props> = ({navigation, route}) => {
         <Text style={styles.hi}>Please enter your OTP</Text>
         <View style={styles.form}>
           <Input
+            autoFocus
+            onSubmitEditing={verify}
             keyboardType="number-pad"
             onChangeText={setotp}
             label={evaProps => (
@@ -44,11 +55,8 @@ const OtpPage: React.FC<Props> = ({navigation, route}) => {
             )}
           />
           <View>
-            <Button
-              onPress={() => {
-                verify();
-              }}>
-              <Text> Verify! </Text>
+            <Button disabled={!otp || loading} onPress={verify}>
+              {loading ? <Loading /> : <Text> Verify! </Text>}
             </Button>
           </View>
         </View>

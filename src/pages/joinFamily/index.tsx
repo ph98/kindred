@@ -4,10 +4,16 @@ import React from 'react';
 import {useState} from 'react';
 // import { Image } from 'react-native-svg';
 import Toast from 'react-native-toast-message';
+
 import {axios} from '../../utils';
+import {Loading} from '../../components';
+
 const JoinFamily = ({navigation}) => {
   const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const submit = () => {
+    setLoading(true);
     AsyncStorage.getItem('user')
       .then(user => JSON.parse(user || '{}'))
       .then(user => {
@@ -21,6 +27,9 @@ const JoinFamily = ({navigation}) => {
           Toast.show({text1: data.message, type: 'success'});
           navigation.pop();
         });
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -32,12 +41,18 @@ const JoinFamily = ({navigation}) => {
 
         <Layout style={styles.inner}>
           <Input
+            autoFocus
+            style={styles.input}
             placeholder="Your invite code"
             value={code}
             onChangeText={(nextValue: string) => setCode(nextValue)}
+            onSubmitEditing={submit}
           />
-          <Button style={styles.modalButtonItem} onPress={() => submit()}>
-            Join!
+          <Button
+            disabled={!code || loading}
+            style={styles.modalButtonItem}
+            onPress={() => submit()}>
+            {loading ? <Loading/> : <Text>Join!</Text>}
           </Button>
         </Layout>
       </Layout>
@@ -48,7 +63,11 @@ const JoinFamily = ({navigation}) => {
 export default JoinFamily;
 
 const styles = StyleService.create({
-  modalButtonItem: {marginBottom: 10},
+  modalButtonItem: {
+    marginBottom: 10,
+    width: '100%',
+    maxWidth: 500,
+  },
   buttonDescription: {},
   buttonTitle: {
     fontWeight: 'bold',
@@ -98,5 +117,8 @@ const styles = StyleService.create({
     color: '#06514a',
     textAlign: 'center',
     marginTop: 10,
+  },
+  input: {
+    marginVertical: 10,
   },
 });
