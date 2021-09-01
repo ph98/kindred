@@ -9,4 +9,6 @@ export type NavigationStackParamList = {
   SelectFamily: undefined;
   JoinFamily: undefined;
   CreateFamily: undefined;
+  FamilyMembers: undefined;
+  InviteMember: undefined;
 };

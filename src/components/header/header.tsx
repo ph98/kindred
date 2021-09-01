@@ -31,7 +31,7 @@ export const Header = () => {
       <Text> Kindred</Text>
       <Pressable
         onPress={() => {
-          navigation.navigate('Profile');
+          navigation.navigate('FamilyMembers');
         }}>
         <Text> Family</Text>
       </Pressable>

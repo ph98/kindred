@@ -17,6 +17,7 @@
     "@react-navigation/native": "^5.11.11",
     "@react-navigation/native-stack": "^6.0.0",
     "@ui-kitten/components": "^5.1.1",
+    "@ui-kitten/eva-icons": "^5.1.1",
     "axios": "^0.21.1",
     "dayjs": "^1.10.6",
     "jetifier": "^2.0.0",
