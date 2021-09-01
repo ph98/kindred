@@ -90,7 +90,6 @@ const ChatSingle: React.FC<Props> = ({navigation, route}) => {
                   }}>
                   {item.content}
                 </Text>
-                <Text />
               </Layout>
               <Text>{dayjs(item.created_at * 1000).format('HH:mm')}</Text>
             </Layout>
