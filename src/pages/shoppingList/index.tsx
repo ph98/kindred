@@ -4,7 +4,7 @@ import {
   CheckBox,
   Input,
   Layout,
-  Modal,
+  Icon,
   Text,
 } from '@ui-kitten/components';
 import {StyleSheet} from 'react-native';
@@ -15,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import {FlatList} from 'react-native-gesture-handler';
-
+import {CommonModal} from '../../components';
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
@@ -81,7 +81,18 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
 
   return (
     <>
-      <Modal
+      <CommonModal
+        visible={visible}
+        setVisible={setVisible}
+        title={'Enter your Item'}
+        description={"Please enter what you'd like to buy"}
+        placeHolder="What to buy?"
+        value={value}
+        setValue={setValue}
+        onOk={addShoppingItem}
+        buttonText="Add to shop list"
+      />
+      {/* <Modal
         visible={visible}
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={() => setVisible(false)}
@@ -98,29 +109,20 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
           }}>
           Add
         </Button>
-      </Modal>
+      </Modal> */}
       <Layout style={styles.container}>
+        <Layout style={styles.header}>
+          <Text style={styles.headerText}> ShoppingList </Text>
+        </Layout>
+
         <Input
           placeholder="Search Items"
           onChangeText={t => setFilterWord(t)}
+          accessoryRight={props => <Icon {...props} name="search" />}
         />
         <FlatList
           ListHeaderComponent={
-            <Layout
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                flex: 1,
-                flexDirection: 'row',
-                padding: 10,
-              }}>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                }}>
-                Buy List
-              </Text>
-            </Layout>
+            <Text style={styles.headerText}> Buy List: </Text>
           }
           data={shoppingItems
             .filter(item => !item.is_bought)
@@ -131,21 +133,7 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
         />
         <FlatList
           ListHeaderComponent={
-            <Layout
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                flex: 1,
-                flexDirection: 'row',
-                padding: 10,
-              }}>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                }}>
-                Bought Items:
-              </Text>
-            </Layout>
+            <Text style={styles.headerText}> Bought Items: </Text>
           }
           data={shoppingItems
             .filter(item => item.is_bought)
@@ -191,6 +179,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     flexDirection: 'column',
+    padding: 15,
+  },
+  header: {
+    justifyContent: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e7f0ef',
+    marginBottom: 10,
+  },
+  headerText: {
+    alignSelf: 'center',
+    padding: 15,
+    color: '#06514a',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   modalStyle: {
     backgroundColor: 'white',
