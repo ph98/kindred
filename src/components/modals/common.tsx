@@ -10,21 +10,29 @@ import {
 import {Text} from 'react-native';
 
 interface InviteModalProps {
+  title: string;
+  description: string;
   visible: boolean;
+  buttonText: string;
+  placeHolder: string;
   setVisible: Dispatch<SetStateAction<boolean>>;
-  phone: string;
-  setPhone: Dispatch<SetStateAction<string>>;
-  onInvite: () => void;
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
+  onOk: () => void;
 }
 
 const DEFAULT_SPACE = 10;
 
 const InviteModal: FC<InviteModalProps> = ({
+  title,
+  description,
+  placeHolder,
   visible,
+  buttonText,
   setVisible,
-  onInvite,
-  phone,
-  setPhone,
+  onOk,
+  value,
+  setValue,
 }) => {
   return (
     <Modal
@@ -35,20 +43,17 @@ const InviteModal: FC<InviteModalProps> = ({
       <Card disabled>
         <Layout>
           <Layout style={[styles.separatorLine, styles.header]}>
-            <Text style={[styles.headerText, styles.txt]}>
-              Invite new member
-            </Text>
+            <Text style={[styles.headerText, styles.txt]}>{title}</Text>
           </Layout>
-          <Text style={[styles.input, styles.txt]}>
-            Please enter new member's phone number
-          </Text>
+          <Text style={[styles.input, styles.txt]}>{description}</Text>
           <Input
+            placeholder={placeHolder}
             style={styles.input}
-            value={phone}
-            onChangeText={t => setPhone(t)}
+            value={value}
+            onChangeText={t => setValue(t)}
           />
-          <Button style={styles.input} onPress={onInvite}>
-            <Text>Send invitation</Text>
+          <Button style={styles.input} onPress={onOk}>
+            <Text>{buttonText}</Text>
           </Button>
         </Layout>
       </Card>

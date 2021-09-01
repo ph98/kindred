@@ -8,7 +8,7 @@ import {
   Modal,
   Text,
 } from '@ui-kitten/components';
-import {Alert, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
 import {axios} from '../../utils';
@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import {FlatList} from 'react-native-gesture-handler';
-
+import {CommonModal} from '../../components';
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
@@ -82,7 +82,18 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
 
   return (
     <>
-      <Modal
+      <CommonModal
+        visible={visible}
+        setVisible={setVisible}
+        title={'Enter your Item'}
+        description={"Please enter what you'd like to buy"}
+        placeHolder="What to buy?"
+        value={value}
+        setValue={setValue}
+        onOk={addShoppingItem}
+        buttonText="Add to shop list"
+      />
+      {/* <Modal
         visible={visible}
         backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
         onBackdropPress={() => setVisible(false)}
@@ -99,13 +110,16 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
           }}>
           Add
         </Button>
-      </Modal>
+      </Modal> */}
       <Layout style={styles.container}>
-        <Text> ShoppingList </Text>
+        <Layout style={styles.header}>
+          <Text style={styles.headerText}> ShoppingList </Text>
+        </Layout>
 
         <Input
           placeholder="Search Items"
           onChangeText={t => setFilterWord(t)}
+          accessoryRight={props => <Icon {...props} name="search" />}
         />
         <FlatList
           data={shoppingItems
@@ -115,7 +129,7 @@ const ShoppingList: React.FC<Props> = ({navigation}) => {
             <ShoppingItem toggleBought={toggleBought} data={item} />
           )}
         />
-        <Text> Bought Items: </Text>
+        <Text style={styles.headerText}> Bought Items: </Text>
         <FlatList
           data={shoppingItems
             .filter(item => item.is_bought)
@@ -164,6 +178,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     flexDirection: 'column',
+    padding: 15,
+  },
+  header: {
+    justifyContent: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e7f0ef',
+    marginBottom: 10,
+  },
+  headerText: {
+    alignSelf: 'center',
+    padding: 15,
+    color: '#06514a',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   modalStyle: {
     backgroundColor: 'white',

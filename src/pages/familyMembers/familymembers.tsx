@@ -5,7 +5,7 @@ import {Avatar, Button, Icon, Layout, Text} from '@ui-kitten/components';
 import {FlatList, Pressable, StyleSheet, Share} from 'react-native';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
 
-import {InviteModal, PopOver} from '../../components';
+import {CommonModal, PopOver} from '../../components';
 import {axios} from '../../utils';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
@@ -82,12 +82,16 @@ const FamilyMembers: React.FC<Props> = ({navigation}) => {
         }}>
         <Text>Choose another family!</Text>
       </Button>
-      <InviteModal
+      <CommonModal
         visible={modalVisible}
         setVisible={setModalVisible}
-        phone={phone}
-        setPhone={setPhone}
-        onInvite={invite}
+        value={phone}
+        placeHolder="Phone number"
+        setValue={setPhone}
+        onOk={invite}
+        buttonText={'Send invitation'}
+        title="Invite new member"
+        description={"Please enter new member's phone number"}
       />
     </Layout>
   );
