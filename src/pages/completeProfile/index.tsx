@@ -11,7 +11,7 @@ import {
   Card,
   Modal,
 } from '@ui-kitten/components';
-import {Pressable} from 'react-native';
+import {Pressable, ScrollView} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
 import {axios} from '../../utils';
@@ -71,42 +71,49 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
-        <Text style={styles.hi}>Kindred</Text>
-        <Text style={styles.title}>Please complete your profile!</Text>
-        <Layout style={styles.form}>
-          <Layout style={styles.imageContainer}>
-            <Pressable
-              onPress={() => {
-                setVisible(true);
-              }}>
-              <Avatar
-                style={styles.avatar}
-                source={image || require('../../assets/icon_add.png')}
-              />
-            </Pressable>
+        <ScrollView contentContainerStyle={styles.scroll}>
+          <Text style={styles.hi}>Kindred</Text>
+          <Text style={styles.title}>Please complete your profile!</Text>
+          <Layout style={styles.form}>
+            <Layout style={styles.imageContainer}>
+              <Pressable
+                onPress={() => {
+                  setVisible(true);
+                }}>
+                <Avatar
+                  style={styles.avatar}
+                  source={image || require('../../assets/icon_add.png')}
+                />
+              </Pressable>
+            </Layout>
+            <Input
+              returnKeyType="next"
+              style={styles.input}
+              onChangeText={setFirstname}
+              label={evaProps => <Text {...evaProps}>First Name</Text>}
+            />
+            <Input
+              returnKeyType="next"
+              style={styles.input}
+              onChangeText={setLastname}
+              label={evaProps => <Text {...evaProps}>Last Name</Text>}
+            />
+            <Datepicker
+              style={styles.input}
+              date={date}
+              onSelect={nextDate => setDate(nextDate)}
+              label={evaProps => <Text {...evaProps}>Birthday</Text>}
+            />
+            <Layout>
+              <Button
+                disabled={!firstname || !lastname || !date}
+                style={styles.input}
+                onPress={complete}>
+                <Text> Start track your family! </Text>
+              </Button>
+            </Layout>
           </Layout>
-          <Input
-            onChangeText={setFirstname}
-            label={evaProps => <Text {...evaProps}>First Name</Text>}
-          />
-          <Input
-            onChangeText={setLastname}
-            label={evaProps => <Text {...evaProps}>Last Name</Text>}
-          />
-          <Datepicker
-            date={date}
-            onSelect={nextDate => setDate(nextDate)}
-            label={evaProps => <Text {...evaProps}>Birthday</Text>}
-          />
-          <Layout>
-            <Button
-              onPress={() => {
-                complete();
-              }}>
-              <Text> Start track your family! </Text>
-            </Button>
-          </Layout>
-        </Layout>
+        </ScrollView>
       </Layout>
       <Modal visible={visible} onBackdropPress={() => setVisible(false)}>
         <Card disabled={true}>
@@ -147,9 +154,11 @@ const themedStyles = StyleService.create({
   },
   container: {
     flex: 1,
+    flexGrow: 1,
     flexDirection: 'column',
     backgroundColor: 'color-primary-500',
     paddingTop: 150,
+    justifyContent: 'flex-end',
   },
   containerInner: {
     backgroundColor: 'white',
@@ -175,5 +184,12 @@ const themedStyles = StyleService.create({
     color: 'color-primary-500',
     textAlign: 'center',
     marginTop: 10,
+  },
+  input: {
+    // marginVertical: 10,
+  },
+  scroll: {
+    justifyContent: 'space-between',
+    flex: 1,
   },
 });
