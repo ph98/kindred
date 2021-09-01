@@ -11,7 +11,7 @@ import {
 } from '@ui-kitten/components';
 import React, {useEffect, useState} from 'react';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
-import {ScrollView} from 'react-native';
+import {ScrollView, Pressable} from 'react-native';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
@@ -20,7 +20,13 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 const Header = ({navigation}) => {
   return (
     <Layout style={[styles.headerWrapper, styles.fullWidth]}>
-      <Icon name="arrow-back-outline" fill="#06514a" style={styles.back} />
+      <Pressable
+        style={styles.back}
+        onPress={() => {
+          navigation.pop();
+        }}>
+        <Icon name="arrow-back-outline" fill="#06514a" style={styles.icon} />
+      </Pressable>
       <Text style={styles.headerText}>Profile</Text>
     </Layout>
   );
@@ -107,7 +113,7 @@ const styles = StyleService.create({
   },
   headerWrapper: {
     justifyContent: 'center',
-    padding: 15,
+    height: 55,
     borderBottomColor: '#e7f0ef',
     borderBottomWidth: 1,
   },
@@ -133,8 +139,12 @@ const styles = StyleService.create({
   },
   back: {
     position: 'absolute',
-    left: 0,
-    top: -5,
+    left: 10,
+    top: 10,
+    width: 32,
+    height: 32,
+  },
+  icon: {
     width: 32,
     height: 32,
   },
