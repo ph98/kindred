@@ -27,7 +27,6 @@ const Map: React.FC<Props> = ({navigation}) => {
     AsyncStorage.getItem('selected_family')
       .then(selected => JSON.parse(selected || '{}'))
       .then(selected => {
-        console.log('selected', selected);
         axios
           .post('/api/kindreds/locations/last-locations/', {
             kindred: selected.id,
@@ -57,14 +56,16 @@ const Map: React.FC<Props> = ({navigation}) => {
               selected.id,
               `${data.coords.latitude} ${data.coords.longitude}`,
             );
-            // axios
-            //   .post('/api/kindreds/locations/', {
-            //     kindred: selected.id,
-            //     coordinate: `${data.coords.latitude} ${data.coords.longitude}`,
-            //   })
-            //   .then(({data}) => {
-            //     console.log('data1', data);
-            //   });
+            axios
+              .post('/api/kindreds/locations/', {
+                coordinate: `${data.coords.latitude} ${data.coords.longitude}`,
+              })
+              .then(({data}) => {
+                console.log('data1', data);
+              })
+              .catch(err => {
+                console.log('err', err.response.data);
+              });
           });
       },
       e => {
