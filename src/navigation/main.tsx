@@ -15,6 +15,7 @@ import CreateFamily from '../pages/createFamily';
 import JoinFamily from '../pages/joinFamily';
 import FamilyMembers from '../pages/familyMembers/familymembers';
 import InviteMember from '../pages/inviteMember';
+import ChatSingle from '../pages/chatSingle';
 const {Navigator, Screen} = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<NavigationStackParamList>();
 
@@ -49,7 +50,8 @@ const MainNavigation = () => {
       <Stack.Screen name="CreateFamily" component={CreateFamily} />
       <Stack.Screen name="FamilyMembers" component={FamilyMembers} />
       <Stack.Screen name="InviteMember" component={InviteMember} />
-      {/* InviteMember */}
+      <Stack.Screen name="ChatSingle" component={ChatSingle} />
+      {/* ChatSingle */}
     </Stack.Navigator>
   );
 };
