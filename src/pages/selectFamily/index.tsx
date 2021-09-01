@@ -2,30 +2,27 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Avatar, Layout, StyleService, Text} from '@ui-kitten/components';
 import React, {useEffect, useState} from 'react';
 import {Pressable, FlatList} from 'react-native';
+import {axios} from '../../utils';
 // import {  } from 'react-native-gesture-handler';
 
 export const SelectFamily = ({navigation}) => {
   const [userData, setUser] = useState({});
   useEffect(() => {
-    AsyncStorage.getItem('user')
-      .then(user => JSON.parse(user || '{}'))
-      .then(user => {
-        console.log('user', user);
-        setUser(user);
-      });
+    axios.get('/api/users/profile').then(({data}) => {
+      console.log('data1', data);
+      setUser(data);
+    });
   }, []);
   return (
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
         <Text style={styles.hi}>Kindred</Text>
         <Text style={styles.title}>Please select</Text>
-
         <Layout style={styles.inner}>
           {/* {
                 userData.kindreds.map
             }
              */}
-
           <FlatList
             style={{width: '100%'}}
             data={userData.kindreds}
