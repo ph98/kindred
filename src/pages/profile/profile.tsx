@@ -7,6 +7,7 @@ import {
   Layout,
   StyleService,
   Text,
+  Icon,
 } from '@ui-kitten/components';
 import React, {useEffect, useState} from 'react';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
@@ -19,10 +20,8 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
 const Header = ({navigation}) => {
   return (
     <Layout style={[styles.headerWrapper, styles.fullWidth]}>
-      <Text>Profile</Text>
-      <Text onPress={() => navigation.pop()} style={styles.back}>
-        back icon
-      </Text>
+      <Icon name="arrow-back-outline" fill="#06514a" style={styles.back} />
+      <Text style={styles.headerText}>Profile</Text>
     </Layout>
   );
 };
@@ -107,12 +106,16 @@ const styles = StyleService.create({
     marginVertical: 10,
   },
   headerWrapper: {
-    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    height: 55,
+    padding: 15,
     borderBottomColor: '#e7f0ef',
     borderBottomWidth: 1,
+  },
+  headerText: {
+    color: '#06514a',
+    fontWeight: 'bold',
+    fontSize: 16,
+    alignSelf: 'center',
   },
   input: {
     marginVertical: 10,
@@ -130,6 +133,9 @@ const styles = StyleService.create({
   },
   back: {
     position: 'absolute',
-    left: 20,
+    left: 0,
+    top: -5,
+    width: 32,
+    height: 32,
   },
 });
