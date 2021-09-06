@@ -56,7 +56,6 @@ const CompleteProfile: React.FC<Props> = ({navigation}) => {
         Toast.show({text1: data.message, type: 'success'});
         console.log('data', data);
         AsyncStorage.setItem('user', JSON.stringify(data.user)).then(() => {
-          navigation.popToTop();
           navigation.replace('Loading');
         });
       })

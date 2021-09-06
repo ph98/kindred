@@ -7,6 +7,7 @@ import {useEffect} from 'react';
 import {axios} from '../../utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
+import socketClusterClient from 'socketcluster-client';
 
 interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
@@ -18,7 +19,6 @@ const ChatSingle: React.FC<Props> = ({navigation, route}) => {
   const [btnLoading, setBtnLoading] = useState(false);
   const {user} = route.params;
   const {id} = user;
-  console.log('user', user);
   const retriveMessages = () => {
     axios
       .post('/api/messaging/chat-messages', {
@@ -26,12 +26,29 @@ const ChatSingle: React.FC<Props> = ({navigation, route}) => {
       })
       .then(({data}) => {
         setChats(data);
-        console.log('[data]', data);
+        // console.log('[messages data]', data);
       });
   };
   useEffect(() => {
+    async () => {
+      const ws = socketClusterClient.create({
+        hostname: 'wss://websocket.kindred.tempserver.ir',
+      });
+      console.log('done1');
+      const wsChannel = ws.channel('kindred-1');
+      wsChannel.subscribe();
+      await wsChannel.listener('subscribe').once();
+
+      (async () => {
+        // eslint-disable-next-line no-restricted-syntax
+        for await (const data of wsChannel) {
+          console.log('[socket]', data);
+          // socketcluster.consumeWorkspaceData(data);
+        }
+      })();
+    };
     retriveMessages();
-  }, [id]);
+  }, [id, retriveMessages]);
 
   const sendMessage = () => {
     setBtnLoading(true);
@@ -41,7 +58,7 @@ const ChatSingle: React.FC<Props> = ({navigation, route}) => {
         sent_to: id,
       })
       .then(({data}) => {
-        console.log('data', data);
+        console.log('[sent message]', data);
         setMessage('');
         retriveMessages();
       })
@@ -81,7 +98,6 @@ const ChatSingle: React.FC<Props> = ({navigation, route}) => {
         renderItem={({item}) => (
           <Layout style={{margin: 10}}>
             <Layout>
-              {console.log(item)}
               <Layout style={{flexDirection: 'row'}}>
                 <Text
                   style={{

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Avatar, Layout, Text} from '@ui-kitten/components';
+import {Avatar, Layout} from '@ui-kitten/components';
 import {StyleSheet} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
@@ -46,10 +46,9 @@ const Map: React.FC<Props> = ({navigation}) => {
     // Geolocation.requestAuthorization().then(data => {
     //   console.log('data', data);
     // });
-
     let geo = Geolocation.watchPosition(
       data => {
-        console.log('data', data);
+        console.log('[location]', data);
         setposition(data.coords);
 
         axios
@@ -66,7 +65,11 @@ const Map: React.FC<Props> = ({navigation}) => {
       e => {
         console.log('e', e);
       },
-      {enableHighAccuracy: true},
+      {
+        enableHighAccuracy: true,
+        showsBackgroundLocationIndicator: true,
+        showLocationDialog: true,
+      },
     );
 
     return () => {
@@ -86,8 +89,6 @@ const Map: React.FC<Props> = ({navigation}) => {
           longitudeDelta: 0.1,
         }}>
         {familyMembersLocations.map(item => {
-          console.log('item', item.user.image);
-
           return (
             <CustomMarker
               coords={{
@@ -116,7 +117,7 @@ const CustomMarker = ({name, image, coords}) => {
       coordinate={coords}
       // onPress={() => setShowtooltip(!showtooltip)}
     >
-      <Avatar source={{uri: image}} />
+      {image && <Avatar source={{uri: image}} />}
     </Marker>
   );
 };

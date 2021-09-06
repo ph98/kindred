@@ -116,7 +116,7 @@ instance.interceptors.response.use(
                   text1: 'Your token is expired, please login again.',
                 });
               }
-              // AsyncStorage.clear();
+              AsyncStorage.clear();
               return Promise.reject(error);
             }),
         )
