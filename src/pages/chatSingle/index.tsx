@@ -5,7 +5,6 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
 import {useEffect} from 'react';
 import {axios} from '../../utils';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
 import socketClusterClient from 'socketcluster-client';
 
@@ -19,6 +18,7 @@ const ChatSingle: React.FC<Props> = ({navigation, route}) => {
   const [btnLoading, setBtnLoading] = useState(false);
   const {user} = route.params;
   const {id} = user;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const retriveMessages = () => {
     axios
       .post('/api/messaging/chat-messages', {
@@ -119,6 +119,7 @@ const ChatSingle: React.FC<Props> = ({navigation, route}) => {
           onChangeText={t => setMessage(t)}
         />
         <Button
+          disabled={btnLoading}
           style={{position: 'absolute', right: 0}}
           onPress={() => sendMessage()}>
           <Text>send!</Text>
