@@ -69,10 +69,10 @@ const Chat: React.FC<Props> = ({navigation}) => {
             image={item.kindred_member.image}
             name={`${item.kindred_member.user.first_name} ${item.kindred_member.user.last_name}`}
             text={item.message?.content || ''}
-            time={item.message ? item.message.created_at || 0 * 1000 : null}
-            onPress={() =>
-              navigation.navigate('ChatSingle', {user: item.kindred_member})
-            }
+            time={item.message ? item.message.created_at * 1000 || 0 : null}
+            onPress={() => {
+              navigation.navigate('ChatSingle', {user: item.kindred_member});
+            }}
           />
         )}
         data={
@@ -103,6 +103,11 @@ const ChatItem = ({image, name, time, text, onPress}) => (
 
       <Text>{text}</Text>
     </Layout>
+    {console.log(
+      "dayjs(time).format('HH:mm')}",
+      time,
+      dayjs(time).format('HH:mm'),
+    )}
     <Text>{time && dayjs(time).format('HH:mm')}</Text>
   </Pressable>
 );

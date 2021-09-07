@@ -23,22 +23,24 @@ const Map: React.FC<Props> = ({navigation}) => {
     heading: 10,
     speed: 10,
   });
+
+  const retriveData = kindred => {
+    axios
+      .post('/api/kindreds/locations/last-locations/', {
+        kindred,
+      })
+      .then(({data}) => {
+        console.log('data', data);
+        setfamilyMembersLocations(data);
+      });
+  };
   useFocusEffect(
     useCallback(() => {
       console.log('object');
       AsyncStorage.getItem('selected_family')
         .then(selected => JSON.parse(selected || '{}'))
         .then(selected => {
-          axios
-            .post('/api/kindreds/locations/last-locations/', {
-              kindred: selected.id,
-            })
-            .then(({data}) => {
-              console.log('data', data);
-              setfamilyMembersLocations(data);
-            });
-
-          // axios.get(`/api/kindreds/${selected.id}/members/`)
+          retriveData(selected.id);
         });
     }, []),
   );
@@ -57,6 +59,11 @@ const Map: React.FC<Props> = ({navigation}) => {
           })
           .then(({data}) => {
             console.log('data1', data);
+            AsyncStorage.getItem('selected_family')
+              .then(selected => JSON.parse(selected || '{}'))
+              .then(selected => {
+                retriveData(selected.id);
+              });
           })
           .catch(err => {
             console.log('err', err.response.data);
