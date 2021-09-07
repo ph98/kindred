@@ -26,6 +26,7 @@ const Chat: React.FC<Props> = ({navigation}) => {
     // setInterval(() => {
     //   console.log('temp.', temp.isSubscribed());
     // }, 1000);
+    console.log('chats', chats);
     (async () => {
       const userChannel = socket.subscribe('kindred-1');
       await userChannel.listener('subscribe').once();
@@ -38,11 +39,23 @@ const Chat: React.FC<Props> = ({navigation}) => {
           if (done) {
             break;
           }
-          if (value.action === 'new_message') {
+          const JSONvlaue = JSON.parse(value);
+          console.log('value.action ', JSONvlaue.action);
+          if (JSONvlaue.action === 'new_message') {
             // TODO: update data with new data
-            console.log(value.sent_from.user.id);
+            console.log('[msg]', JSONvlaue.content);
+            const temp = chats.map((item: any) =>
+              item.kindred_member.id !== JSONvlaue.sent_from.user.id
+                ? item
+                : {
+                    ...item,
+                    message: {...item.message, content: JSONvlaue.content},
+                  },
+            );
+
+            console.log('temp', temp);
+            setChats(temp);
           }
-          console.log(value);
         }
       })();
     })();
@@ -58,6 +71,10 @@ const Chat: React.FC<Props> = ({navigation}) => {
             setChats(data);
           });
       });
+
+    return () => {
+      socket.closeAllListeners();
+    };
   }, []);
   return (
     <Layout style={styles.container}>
@@ -100,14 +117,8 @@ const ChatItem = ({image, name, time, text, onPress}) => (
     <Avatar source={{uri: image}} />
     <Layout>
       <Text style={{fontWeight: 'bold'}}>{name}</Text>
-
       <Text>{text}</Text>
     </Layout>
-    {console.log(
-      "dayjs(time).format('HH:mm')}",
-      time,
-      dayjs(time).format('HH:mm'),
-    )}
     <Text>{time && dayjs(time).format('HH:mm')}</Text>
   </Pressable>
 );
