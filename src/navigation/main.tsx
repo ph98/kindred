@@ -8,7 +8,16 @@ import {BottomNavigation, BottomNavigationTab} from '@ui-kitten/components';
 import Map from '../pages/map';
 import ShoppingList from '../pages/shoppingList';
 import Chat from '../pages/chat';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {NavigationStackParamList} from './navigationParams';
+import ProfilePage from '../pages/profile/profile';
+import CreateFamily from '../pages/createFamily';
+import JoinFamily from '../pages/joinFamily';
+import FamilyMembers from '../pages/familyMembers/familymembers';
+import InviteMember from '../pages/inviteMember';
+import ChatSingle from '../pages/chatSingle';
 const {Navigator, Screen} = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<NavigationStackParamList>();
 
 interface Props extends BottomTabBarProps<BottomTabBarOptions> {
   state: any;
@@ -33,7 +42,17 @@ const TabNavigator = () => (
 );
 
 const MainNavigation = () => {
-  return <TabNavigator />;
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Tabs" component={TabNavigator} />
+      <Stack.Screen name="Profile" component={ProfilePage} />
+      <Stack.Screen name="JoinFamily" component={JoinFamily} />
+      <Stack.Screen name="CreateFamily" component={CreateFamily} />
+      <Stack.Screen name="FamilyMembers" component={FamilyMembers} />
+      <Stack.Screen name="InviteMember" component={InviteMember} />
+      <Stack.Screen name="ChatSingle" component={ChatSingle} />
+    </Stack.Navigator>
+  );
 };
 
 export default MainNavigation;

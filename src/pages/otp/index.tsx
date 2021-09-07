@@ -4,6 +4,7 @@ import {View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {NavigationStackParamList} from '../../navigation/navigationParams';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {axios} from '../../utils';
 import {Loading} from '../../components';
@@ -11,22 +12,27 @@ interface Props extends NativeStackScreenProps<NavigationStackParamList> {
   state: any;
 }
 
-const LoginPage: React.FC<Props> = ({navigation}) => {
-  const [phone, setphone] = useState('+989910472915');
+const OtpPage: React.FC<Props> = ({navigation, route}) => {
+  const [otp, setotp] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const login = () => {
+  const verify = () => {
+    const {phone} = route.params;
+
     setLoading(true);
     axios
-      .post('/api/users/sign-up', {phone_number: phone})
+      .post('/api/users/confirm-signup', {phone_number: phone, otp})
       .then(({data}) => {
+        Toast.show({text1: data.message, type: 'success'});
         console.log('data', data);
-        Toast.show({
-          type: 'success',
-          text1: data.message,
-          text2: '' + data.otp,
-        });
-        navigation.navigate('Otp', {phone});
+        AsyncStorage.setItem('refresh', JSON.stringify(data.tokens.refresh));
+        AsyncStorage.setItem('user', JSON.stringify(data.user));
+        AsyncStorage.setItem('access', JSON.stringify(data.tokens.access)).then(
+          () => {
+            navigation.popToTop();
+            navigation.replace('Loading');
+          },
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -37,29 +43,20 @@ const LoginPage: React.FC<Props> = ({navigation}) => {
     <Layout style={styles.container}>
       <Layout style={styles.containerInner}>
         <Text style={styles.title}>Kindred</Text>
-        <Text style={styles.hi}>Hi!</Text>
-        <Text style={styles.text}>
-          Welcome to Kindred! for start using the app please login into you'r
-          account
-        </Text>
-
+        <Text style={styles.hi}>Please enter your OTP</Text>
         <View style={styles.form}>
           <Input
             autoFocus
-            // textStyle={{ ... }}
+            onSubmitEditing={verify}
             keyboardType="number-pad"
-            value={phone}
-            onChangeText={setphone}
-            label={evaProps => <Text {...evaProps}>Phone number</Text>}
-            onSubmitEditing={login}
+            onChangeText={setotp}
+            label={evaProps => (
+              <Text {...evaProps}>Enter your verification code</Text>
+            )}
           />
           <View>
-            <Button
-              disabled={!phone || loading}
-              onPress={() => {
-                login();
-              }}>
-              {loading ? <Loading /> : <Text> Login / Sign up </Text>}
+            <Button disabled={!otp || loading} onPress={verify}>
+              {loading ? <Loading /> : <Text> Verify! </Text>}
             </Button>
           </View>
         </View>
@@ -68,7 +65,7 @@ const LoginPage: React.FC<Props> = ({navigation}) => {
   );
 };
 
-export default LoginPage;
+export default OtpPage;
 
 const styles = StyleService.create({
   container: {
